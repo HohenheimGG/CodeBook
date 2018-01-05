@@ -1,6 +1,7 @@
-# Summary
-
-* [Chapter1](chapter1/README.md)
-    * [Section1.1](chapter1/section1.1.md)
-    * [Section1.2](chapter1/section1.2.md)
-* [Chapter2](chapter2/README.md)
+* [chapter1](books/chapter1/README.md)
+    * [chapter1](books/chapter1/chapter1/README.md)
+        * [section1](books/chapter1/chapter1/section1.2.md)
+    * [section1](books/chapter1/section1.2.md)
+* [chapter2](books/chapter2/README.md)
+    * [chapter1](books/chapter2/chapter1/README.md)
+        * [section1](books/chapter2/chapter1/section1.2.md)
