@@ -10,8 +10,6 @@ const BOOK_DIR = 'books';
 const README = 'README';
 //目录索引
 const SUMMARY = 'SUMMARY.md';
-//执行次数
-var time = 1;
 
 (function() {
 	var modules = {}
@@ -36,8 +34,16 @@ var time = 1;
 		let files = fs.readdirSync(bookPath);
 		files.forEach(function(element) {
 			let dir = bookPath + '/' + element;
-			if(fs.statSync(dir).isDirectory())
+			let stat = fs.statSync(dir);
+			let isFile = stat.isFile();
+			let isDir = stat.isDirectory();
+
+			if(isDir)
 				modules[element] = loopLoad(dir);
+			if(isFile && element.charAt(0) != '.') {
+				let fileName = getTitle(element);
+				modules[fileName] = dir;
+			}
 		}, this);
 
 		console.log('加载数据完成: ' + JSON.stringify(modules) + '\n');
@@ -58,7 +64,7 @@ var time = 1;
 			let isDir = stat.isDirectory();
 
 			if(isFile && fileName.charAt(0) != '.') {
-				fileName = fileName.substring(0, fileName.split('.')[0].length);//取文件名, 去掉后缀
+				fileName = getTitle(fileName);
 				tempModule[fileName] = fileDir;
 			}
 
@@ -71,6 +77,10 @@ var time = 1;
 		console.log(dirName + '当前数据: ' + JSON.stringify(tempModule) + '\n');
 
 		return tempModule;
+	}
+
+	var getTitle = function(fileName) {
+		return fileName.substring(0, fileName.lastIndexOf('.'));//取文件名, 去掉后缀
 	}
 
 	/**
@@ -154,16 +164,15 @@ var time = 1;
 	}
 
 	var pullScript = function() {
-		console.log('执行次数: ' + time + ' 执行时间: ' + new Date() + '\n');
 		time += 1;
-		exec('git pull', function(err, stdout, stderr) {
+		let command = `cd ${booksDir} && git pull`;
+		exec(command, function(err, stdout, stderr) {
 			if(err)
 				throw err;
 			console.log(stdout);
-			if(stdout.match('Already up-to-date.'))
-				pullScript();
-			else
+			if(!stdout.match('Already up-to-date.'))
 				generateSummary();
+			pullScript();
 		}, this);
 	}
 
